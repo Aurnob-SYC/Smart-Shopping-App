@@ -1,0 +1,59 @@
+<!-- Search Bar Component -->
+<div class="flex justify-center items-center py-8">
+    <form id="search-form" class="w-full max-w-md">
+        <div class="flex items-center border rounded-2xl px-4 py-2 shadow">
+            <input type="text" name="q" id="search-input" placeholder="Search products..."
+                class="w-full focus:outline-none" autocomplete="off" />
+            <button type="submit" class="ml-2 px-4 py-2 rounded-2xl shadow bg-gray-200">
+                Search
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Popup Modal -->
+<div id="search-modal"
+    class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white p-6 w-96 rounded-xl shadow-lg relative">
+
+        <!-- Close button -->
+        <button id="modal-close" class="absolute top-2 right-3 text-xl">&times;</button>
+
+        <h2 class="text-xl font-bold mb-4">Search Result</h2>
+        <div id="modal-content" class="text-gray-700">
+            <!-- Result text goes here -->
+        </div>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById("search-form");
+    const modal = document.getElementById("search-modal");
+    const modalClose = document.getElementById("modal-close");
+    const modalContent = document.getElementById("modal-content");
+    const input = document.getElementById("search-input");
+
+    // Open popup on submit
+    form.addEventListener("submit", function (e) {
+        e.preventDefault(); // Do not reload
+        const value = input.value.trim();
+
+        if (!value) {
+            modalContent.innerHTML = "No search text provided.";
+        } else {
+            modalContent.innerHTML = `You searched for: <b>${value}</b>`;
+        }
+
+        modal.classList.remove("hidden");
+    });
+
+    // Close popup
+    modalClose.addEventListener("click", () => {
+        modal.classList.add("hidden");
+    });
+
+    // Auto suggestions placeholder
+    input.addEventListener("input", async (e) => {
+        // TODO: AJAX suggestions
+    });
+</script>

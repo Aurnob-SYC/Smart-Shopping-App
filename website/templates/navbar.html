@@ -1,0 +1,40 @@
+<!-- templates/includes/navbar.html -->
+<nav class="bg-blue-600 text-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16 items-center">
+      <!-- Logo -->
+      <a href="/" class="text-2xl font-bold">MySite</a>
+
+      <!-- Desktop Links -->
+      <div class="hidden md:flex space-x-6">
+        <a href="/" class="hover:text-blue-200">Home</a>
+        <a href="/about/" class="hover:text-blue-200">About</a>
+        <a href="/contact/" class="hover:text-blue-200">Contact</a>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button id="menu-btn" class="md:hidden focus:outline-none">
+        <!-- Hamburger Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="md:hidden hidden px-4 pb-3 space-y-2 bg-blue-700">
+    <a href="/" class="block py-2 hover:text-blue-200">Home</a>
+    <a href="/about/" class="block py-2 hover:text-blue-200">About</a>
+    <a href="/contact/" class="block py-2 hover:text-blue-200">Contact</a>
+  </div>
+</nav>
+
+<!-- Small JavaScript for mobile toggle -->
+<script>
+  const btn = document.getElementById('menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  btn.addEventListener('click', () => menu.classList.toggle('hidden'));
+</script>
