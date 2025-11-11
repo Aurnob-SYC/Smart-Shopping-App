@@ -1,0 +1,23 @@
+{
+  "name": "smart_shopping_app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aurnob-SYC/Smart-Shopping-App.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Aurnob-SYC/Smart-Shopping-App/issues"
+  },
+  "homepage": "https://github.com/Aurnob-SYC/Smart-Shopping-App#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^24.10.0"
+  }
+}

@@ -1,7 +1,6 @@
-<!-- Search Bar Component -->
-<div class="flex justify-center items-center py-8">
+<div class="flex justify-center items-center py-8 relative">
     <form id="search-form" class="w-full max-w-md">
-        <div class="flex items-center border rounded-2xl px-4 py-2 shadow">
+        <div class="flex items-center border rounded-2xl px-4 py-2 shadow relative">
             <input type="text" name="q" id="search-input" placeholder="Search products..."
                 class="w-full focus:outline-none" autocomplete="off" />
             <button type="submit" class="ml-2 px-4 py-2 rounded-2xl shadow bg-gray-200">
@@ -9,51 +8,98 @@
             </button>
         </div>
     </form>
+
+    <!-- Suggestions dropdown -->
+    <div id="suggestions"
+         class="absolute top-full left-0 right-0 mt-1 bg-white border rounded shadow max-h-48 overflow-y-auto hidden z-50">
+    </div>
 </div>
 
-<!-- Popup Modal -->
+<!-- Popup Modal for search result -->
 <div id="search-modal"
-    class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+     class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white p-6 w-96 rounded-xl shadow-lg relative">
-
-        <!-- Close button -->
         <button id="modal-close" class="absolute top-2 right-3 text-xl">&times;</button>
-
         <h2 class="text-xl font-bold mb-4">Search Result</h2>
-        <div id="modal-content" class="text-gray-700">
-            <!-- Result text goes here -->
-        </div>
+        <div id="modal-content" class="text-gray-700"></div>
     </div>
 </div>
 
 <script>
-    const form = document.getElementById("search-form");
-    const modal = document.getElementById("search-modal");
-    const modalClose = document.getElementById("modal-close");
-    const modalContent = document.getElementById("modal-content");
-    const input = document.getElementById("search-input");
+const input = document.getElementById("search-input");
+const suggestionsDiv = document.getElementById("suggestions");
+const form = document.getElementById("search-form");
+const modal = document.getElementById("search-modal");
+const modalClose = document.getElementById("modal-close");
+const modalContent = document.getElementById("modal-content");
 
-    // Open popup on submit
-    form.addEventListener("submit", function (e) {
-        e.preventDefault(); // Do not reload
-        const value = input.value.trim();
+let debounceTimeout;
 
-        if (!value) {
-            modalContent.innerHTML = "No search text provided.";
-        } else {
-            modalContent.innerHTML = `You searched for: <b>${value}</b>`;
+// Live suggestions
+input.addEventListener("input", () => {
+    const query = input.value.trim();
+    clearTimeout(debounceTimeout);
+
+    // Hide suggestions immediately if input is empty
+    if (!query) {
+        suggestionsDiv.innerHTML = '';
+        suggestionsDiv.classList.add("hidden");
+        return;
+    }
+
+    debounceTimeout = setTimeout(async () => {
+        const currentValue = input.value.trim(); // check input again before showing
+        if (!currentValue) {
+            suggestionsDiv.innerHTML = '';
+            suggestionsDiv.classList.add("hidden");
+            return;
         }
 
-        modal.classList.remove("hidden");
-    });
+        try {
+            const response = await fetch(`/search-suggestions/?q=${encodeURIComponent(currentValue)}`);
+            const results = await response.json();
 
-    // Close popup
-    modalClose.addEventListener("click", () => {
-        modal.classList.add("hidden");
-    });
+            if (results.length === 0) {
+                suggestionsDiv.innerHTML = '<div class="p-2 text-gray-500">No results</div>';
+            } else {
+                suggestionsDiv.innerHTML = results.map(item =>
+                    `<div class="p-2 hover:bg-gray-100 cursor-pointer">${item.name}</div>`
+                ).join('');
 
-    // Auto suggestions placeholder
-    input.addEventListener("input", async (e) => {
-        // TODO: AJAX suggestions
-    });
+                // Click a suggestion -> fill input and submit form
+                Array.from(suggestionsDiv.children).forEach(child => {
+                    child.addEventListener("click", () => {
+                        input.value = child.textContent;
+                        suggestionsDiv.innerHTML = '';
+                        suggestionsDiv.classList.add("hidden");
+                        form.dispatchEvent(new Event('submit'));
+                    });
+                });
+            }
+
+            suggestionsDiv.classList.remove("hidden");
+        } catch (err) {
+            console.error(err);
+        }
+    }, 300); // debounce delay
+});
+
+// Form submit -> show popup
+form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const value = input.value.trim();
+
+    if (!value) {
+        modalContent.innerHTML = "No search text provided.";
+    } else {
+        modalContent.innerHTML = `You searched for: <b>${value}</b>`;
+    }
+
+    modal.classList.remove("hidden");
+});
+
+// Close popup
+modalClose.addEventListener("click", () => {
+    modal.classList.add("hidden");
+});
 </script>
